@@ -24,7 +24,7 @@ final class BookPlayMainTests: XCTestCase {
         }
         
         await store.send(.screenLoaded) {
-            $0.downloadMode = .initialDownloading
+            $0.downloadMode = .downloading
         }
         
         await store.receive(\.downloadMetaData) {

@@ -10,6 +10,13 @@ import UIKit
 import SwiftUI
 import ComposableArchitecture
 
+enum DonwloadingStep: Equatable {
+    case notDownloaded
+    case downloading
+    case downloaded
+    case downloadingFailed
+}
+
 @Reducer
 struct BookPlayMainReducer {
     
@@ -33,14 +40,11 @@ struct BookPlayMainReducer {
         }
         
         var playerState: BookPlayerComponentReducer.State
-        var bookeCoverPlaceholder: UIImage = .init(named: "book_cover")!
-        var liveImage: Image?
     }
     
     enum Action {
         case changeScreenType
         case screenLoaded
-        case coverIsloaded(image: Image)
         case tryLoadBookAgain
         case downloadMetaData(Result<Metadata, Error>)
         case playerAction(BookPlayerComponentReducer.Action)
@@ -56,21 +60,12 @@ struct BookPlayMainReducer {
             
             switch action {
                 
-            case .coverIsloaded(let image):
-                state.liveImage = image
-                return .none
-                
-                
             case .changeScreenType:
                 state.isLyricsScreenMode.toggle()
                 return .none
                 
             case .screenLoaded, .tryLoadBookAgain:
-                guard state.downloadMode == .notDownloaded || state.downloadMode == .downloadingFailed else {
-                    return .none
-                }
-                
-                state.downloadMode = .initialDownloading
+                state.downloadMode = .downloading
                 return .run { [url = state.metadataUrlString] send in
                     let metaData = try await apiClient.bookMetadata(url: url)
                     await send(.downloadMetaData(.success(metaData)))
@@ -80,7 +75,7 @@ struct BookPlayMainReducer {
                 
             case .downloadMetaData(.success(let metaData)):
                 state.coverImageUrl = URL.init(string: metaData.imageUrl)
-                state.downloadMode = .downloadingFailed
+                state.downloadMode = .downloaded
                 state.keyPoints = metaData.keyPoints
                 state.currentChapter = metaData.keyPoints.first
                 state.playerState.currentTrack = state.currentUrl
@@ -134,12 +129,4 @@ struct BookPlayMainReducer {
         state.playerState.currentTrack = state.currentUrl
     }
     
-}
-
-enum DonwloadingStep: Equatable {
-    case initialDownloading
-    case downloading
-    case downloaded
-    case notDownloaded
-    case downloadingFailed
 }
