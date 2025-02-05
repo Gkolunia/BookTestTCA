@@ -53,6 +53,7 @@ struct BookPlayerComponentReducer {
         case pause
     }
     
+    @Dependency(\.playerClient) var playerClient
     @Dependency(\.continuousClock) var clock
     
     var body: some Reducer<State, Action> {
@@ -60,27 +61,71 @@ struct BookPlayerComponentReducer {
             switch action {
                 
             case .viewOnAppear:
-                return .none
+                guard state.currentTrack != nil else { return .none }
+                
+                return .run { send in
+                    await send(.playPauseTapped)
+                    await send(.loadTrackInfo)
+                }
                 
             case .playPauseTapped:
-                return .none
+                state.isPlaying.toggle()
+                
+                if !state.isPlaying {
+                    playerClient.pause()
+                    return .cancel(id: state.id)
+                }
+                
+                guard let item = state.currentTrack else { return .none }
+                
+                return .run { send in
+                    await isUrlAlreadyPlaying(urlTrack: item) ? playerClient.playCurrent() : playerClient.play(url: item)
+                    for await _ in self.clock.timer(interval: .seconds(1)) {
+                        await send(.tick)
+                    }
+                }
+                .cancellable(id: state.id)
             
             case .playFromStart:
-                return .none
+                guard let item = state.currentTrack else { return .none }
+                
+                state.isPlaying = true
+                state.currentTime = 0.0
+                playerClient.play(url: item)
+                
+                return .run { send in
+                    await send(.loadTrackInfo)
+                    for await _ in self.clock.timer(interval: .seconds(1)) {
+                        await send(.tick)
+                    }
+                }
+                .cancellable(id: state.id)
 
             case .pause:
-                return .none
+                state.isPlaying = false
+                playerClient.pause()
+                return .cancel(id: state.id)
                 
             case .seek(let time):
+                playerClient.setCurrentTime(time: time)
+                state.currentTime = min(max(time, 0), state.totalTime)
                 return .none
                 
             case .jumpBackward:
+                state.currentTime = max(state.currentTime - 5, 0)
+                playerClient.setCurrentTime(time: state.currentTime)
                 return .none
                 
             case .jumpForward:
+                state.currentTime = min(state.currentTime + 10, state.totalTime)
+                playerClient.setCurrentTime(time: state.currentTime)
                 return .none
                 
             case .previousTrack, .nextTrack:
+                if state.isPlaying {
+                    playerClient.pause()
+                    return .cancel(id: state.id)
+                }
                 return .none
                 
             case .totalTime(let duration):
@@ -89,19 +134,32 @@ struct BookPlayerComponentReducer {
                 return .none
                 
             case .loadTrackInfo:
-                return .none
+                state.isLoadingTrackInfo = true
+                return .run { send in
+                    await send(.totalTime( (try? playerClient.duration()) ?? 0.0 ))
+                }
                 
             case .currentTime(let currentTime):
+                state.currentTime = currentTime
                 return .none
                 
             case .changeSpeed:
+                state.speed = state.speed + 1 > 3 ? 1 : state.speed + 1
+                playerClient.changeSpeed(rate: state.speed)
                 return .none
                 
             case .tick:
+                state.currentTime = playerClient.currentTime
+                if state.currentTime >= state.totalTime {
+                    _ = Effect<BookPlayerComponentReducer.Action>.cancel(id: state.id)
+                    return .run { send in
+                        await send(.nextTrack)
+                    }
+                }
+                
                 return .none
             }
         }
-        
     }
     
     @MainActor private func isUrlAlreadyPlaying(urlTrack: URL) -> Bool {

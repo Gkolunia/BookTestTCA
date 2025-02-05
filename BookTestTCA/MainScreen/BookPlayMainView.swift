@@ -35,7 +35,7 @@ struct BookPlayMainView: View {
             case .downloaded, .downloadingFailed:
                 VStack {
                     if store.isLyricsScreenMode {
-
+                        ScrollWithFadedEdgesView(text: viewStore.lyricsText)
                     } else {
                         AsyncImage(url: viewStore.coverImageUrl) { result in
                                     result.image?
@@ -53,6 +53,13 @@ struct BookPlayMainView: View {
                     Text(viewStore.chapterName)
                         .font(.system(size: 14, weight: .semibold))
                         .multilineTextAlignment(.center)
+                    
+                    BookPlayerComponentView(store: store.scope(state: \.playerState, action: \.playerAction))
+                    ToggleButtonView(isRightSelected: viewStore.binding(
+                                        get: \.isLyricsScreenMode,
+                                        send: BookPlayMainReducer.Action.changeScreenType),
+                                     leftIcon: "headphones",
+                                     rightIcon: "text.alignleft")
 
                 }
                 .padding()
