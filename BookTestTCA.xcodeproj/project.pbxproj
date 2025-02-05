@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5D0242602D536674008A8AF3 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 5D02425F2D536674008A8AF3 /* ComposableArchitecture */; };
+		5D549AEC2D53F44700AAAFDB /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 5D549AEB2D53F44700AAAFDB /* CachedAsyncImage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,11 @@
 			path = BookTestTCAUITests;
 			sourceTree = "<group>";
 		};
+		5D549AE82D53CED500AAAFDB /* Assets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Assets;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +63,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D0242602D536674008A8AF3 /* ComposableArchitecture in Frameworks */,
+				5D549AEC2D53F44700AAAFDB /* CachedAsyncImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				5D0242242D5365C3008A8AF3 /* BookTestTCA */,
+				5D549AE82D53CED500AAAFDB /* Assets */,
 				5D0242352D5365C5008A8AF3 /* BookTestTCATests */,
 				5D02423F2D5365C5008A8AF3 /* BookTestTCAUITests */,
 				5D0242232D5365C3008A8AF3 /* Products */,
@@ -114,10 +122,12 @@
 			);
 			fileSystemSynchronizedGroups = (
 				5D0242242D5365C3008A8AF3 /* BookTestTCA */,
+				5D549AE82D53CED500AAAFDB /* Assets */,
 			);
 			name = BookTestTCA;
 			packageProductDependencies = (
 				5D02425F2D536674008A8AF3 /* ComposableArchitecture */,
+				5D549AEB2D53F44700AAAFDB /* CachedAsyncImage */,
 			);
 			productName = BookTestTCA;
 			productReference = 5D0242222D5365C3008A8AF3 /* BookTestTCA.app */;
@@ -203,6 +213,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				5D02425E2D536674008A8AF3 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				5D549AEA2D53F44700AAAFDB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5D0242232D5365C3008A8AF3 /* Products */;
@@ -404,7 +415,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"BookTestTCA/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Assets\"";
 				DEVELOPMENT_TEAM = QK893C648G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -433,7 +444,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"BookTestTCA/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Assets\"";
 				DEVELOPMENT_TEAM = QK893C648G;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -577,6 +588,14 @@
 				minimumVersion = 1.17.1;
 			};
 		};
+		5D549AEA2D53F44700AAAFDB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -584,6 +603,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5D02425E2D536674008A8AF3 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		5D549AEB2D53F44700AAAFDB /* CachedAsyncImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D549AEA2D53F44700AAAFDB /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;
+			productName = CachedAsyncImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

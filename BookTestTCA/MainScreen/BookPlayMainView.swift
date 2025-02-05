@@ -8,6 +8,7 @@
 import AVFoundation
 import ComposableArchitecture
 import SwiftUI
+import CachedAsyncImage
 
 struct BookPlayMainView: View {
     
@@ -37,14 +38,17 @@ struct BookPlayMainView: View {
                     if store.isLyricsScreenMode {
                         ScrollWithFadedEdgesView(text: viewStore.lyricsText)
                     } else {
-                        AsyncImage(url: viewStore.coverImageUrl) { result in
-                                    result.image?
-                                        .resizable()
-                                        .scaledToFit()
+                        CachedAsyncImage(url: viewStore.coverImageUrl) { image in
+                            image
+                                .resizable()
+                                .scaledToFit()
+                        } placeholder: {
+                            Image("book_cover")
+                                .resizable()
+                                .scaledToFit()
                         }
                         .cornerRadius(16)
                     }
-                    
                     
                     Text(viewStore.chaptersCount)
                         .foregroundStyle(.gray)

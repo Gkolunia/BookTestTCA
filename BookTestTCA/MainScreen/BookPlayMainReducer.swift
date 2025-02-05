@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import UIKit
+import SwiftUI
 import ComposableArchitecture
 
 @Reducer
@@ -31,11 +33,14 @@ struct BookPlayMainReducer {
         }
         
         var playerState: BookPlayerComponentReducer.State
+        var bookeCoverPlaceholder: UIImage = .init(named: "book_cover")!
+        var liveImage: Image?
     }
     
     enum Action {
         case changeScreenType
         case screenLoaded
+        case coverIsloaded(image: Image)
         case tryLoadBookAgain
         case downloadMetaData(Result<Metadata, Error>)
         case playerAction(BookPlayerComponentReducer.Action)
@@ -50,6 +55,12 @@ struct BookPlayMainReducer {
         Reduce { state, action in
             
             switch action {
+                
+            case .coverIsloaded(let image):
+                state.liveImage = image
+                return .none
+                
+                
             case .changeScreenType:
                 state.isLyricsScreenMode.toggle()
                 return .none
@@ -69,10 +80,9 @@ struct BookPlayMainReducer {
                 
             case .downloadMetaData(.success(let metaData)):
                 state.coverImageUrl = URL.init(string: metaData.imageUrl)
-                state.downloadMode = .downloaded
+                state.downloadMode = .downloadingFailed
                 state.keyPoints = metaData.keyPoints
                 state.currentChapter = metaData.keyPoints.first
-                state.downloadMode = .downloaded
                 state.playerState.currentTrack = state.currentUrl
                 state.chaptersCount = "KEY POINT 1 OF \(metaData.keyPoints.count)"
                 return .none
